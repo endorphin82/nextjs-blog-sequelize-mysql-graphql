@@ -53,14 +53,16 @@ const Album = sequelize.define("albums", {
   timestamps: false
 })
 
-// Artist.hasMany(Album, {
-//   onDelete: "CASCADE",
-//   onUpdate: "CASCADE",
-//   foreignKey: "artist_id"
-// })
-// Album.belongsTo(Artist, {
-//   foreignKey: "id"
-// })
+Artist.hasMany(Album, {
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+  foreignKey: "artist_id"
+})
+Album.belongsTo(Artist, {
+  foreignKey: {
+    name: "artist_id"
+  }
+})
 
 const typeDefs = gql`
     type Query {
