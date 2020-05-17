@@ -1,0 +1,32 @@
+# This file was generated based on ".graphqlconfig". Do not edit manually.
+
+schema {
+    query: Query
+}
+
+type Album {
+    artist: Artist!
+    id: ID!
+    name: String!
+    year: String!
+}
+
+type Artist {
+    albums(first: Int = 25, skip: Int = 0): [Album]
+    id: ID!
+    name: String!
+    url: String
+}
+
+type Query {
+    albums(first: Int = 25, skip: Int = 0): [Album]
+}
+
+enum CacheControlScope {
+    PRIVATE
+    PUBLIC
+}
+
+
+"The `Upload` scalar type represents a file upload."
+scalar Upload

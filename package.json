@@ -1,0 +1,47 @@
+{
+  "name": "my-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port=3001",
+    "build": "next build",
+    "start": "next start",
+    "now-build": "next build && yarn db:migrate",
+    "db:migrate": "knex migrate:latest",
+    "db:rollback": "knex migrate:rollback"
+  },
+  "dependencies": {
+    "@apollo/react-hooks": "^3.1.5",
+    "@apollo/react-ssr": "^3.1.5",
+    "@fullhuman/postcss-purgecss": "^2.2.0",
+    "apollo-cache-inmemory": "^1.6.6",
+    "apollo-client": "^2.6.10",
+    "apollo-link-http": "^1.5.17",
+    "apollo-server-micro": "^2.13.1",
+    "classnames": "^2.2.6",
+    "dataloader": "^2.0.0",
+    "date-fns": "^2.13.0",
+    "graphql-tag": "^2.10.3",
+    "gray-matter": "^4.0.2",
+    "isomorphic-unfetch": "^3.0.0",
+    "knex": "^0.21.1",
+    "micro-cors": "^0.1.1",
+    "mysql": "^2.18.1",
+    "mysql2": "^2.1.0",
+    "next": "9.3.5",
+    "postcss-preset-env": "^6.7.0",
+    "react": "16.13.1",
+    "react-dom": "16.13.1",
+    "remark": "^12.0.0",
+    "remark-html": "^11.0.2",
+    "sass": "^1.26.5",
+    "sequelize": "^5.21.9",
+    "sequelize-cli": "^5.5.1",
+    "tailwindcss": "^1.4.6"
+  },
+  "devDependencies": {
+    "@types/node": "^14.0.1",
+    "@types/react": "^16.9.35",
+    "typescript": "^3.9.2"
+  }
+}
