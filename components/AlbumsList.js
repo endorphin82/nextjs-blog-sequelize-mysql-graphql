@@ -29,6 +29,7 @@ export default function AlbumsList() {
   console.log("allAlbums", albums)
   return (
     <section>
+       <h3>Sequelize</h3>
       <ul>
         {albums.map((album, index) => (
           <li key={album.id}>

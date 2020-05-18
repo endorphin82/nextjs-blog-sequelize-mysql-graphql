@@ -22,11 +22,11 @@ const Artist = sequelize.define("artists", {
     primaryKey: true
   },
   name: {
-    type: STRING,
+    type: STRING({ length: 255 }),
     allowNull: false
   },
   url: {
-    type: STRING
+    type: STRING({ length: 255 })
   }
 }, {
   timestamps: false
@@ -40,11 +40,11 @@ const Album = sequelize.define("albums", {
     primaryKey: true
   },
   name: {
-    type: STRING,
+    type: STRING({ length: 255 }),
     allowNull: false
   },
   year: {
-    type: STRING
+    type: STRING({ length: 45 })
   },
   artist_id: {
     type: INTEGER
@@ -86,25 +86,33 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
-    albums: (_parent, args, _context) => {
+    albums: async (_parent, args, _context) => {
       return Album.findAll()
         .then(a => a)
-
     }
   },
+
+  // Album: {
+  //   id: (album, _args, _context) => album.id,
+  //   artist: async (album, _args, { loader }) => {
+  //     return await Artist.findOne({ where: { id: album.artist_id } })
+  //   }
+  // },
 
   Album: {
-    id: (album, _args, _context) => album.id,
-    artist: async (album, _args, { loader }) => {
-      return await Artist.findOne({ where: { id: album.artist_id } })
-    }
+    artist: (parent, _args, _context) => parent.getArtist()
   },
 
+  // Artist: {
+  //   id: (artist, _args, _context) => artist.id,
+  //   albums: async (artist, args, _context) => {
+  //
+  //     return Artist.findAll({ where: { artist_id: artist.id } })
+  //   }
+  // },
+
   Artist: {
-    id: (artist, _args, _context) => artist.id,
-    albums: async (artist, args, _context) => {
-      return Artist.findAll({ where: { artist_id: artist.id } })
-    }
+    albums: (parent, _args, _context) => parent.getAlbums(),
   }
 }
 
