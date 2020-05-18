@@ -14,7 +14,6 @@ sequelize
     console.error("Unable to connect to the database:", err)
   })
 
-
 const Artist = sequelize.define("artists", {
   id: {
     type: INTEGER,
@@ -54,48 +53,29 @@ const Album = sequelize.define("albums", {
   timestamps: false
 })
 
-/*
-Artist.associate = function(Album) {
-  Artist.hasMany(Album, {
-    onDelete: "CASCADE",
-    onUpdate: "CASCADE",
-    foreignKey: 'artist_id'
-  })
-}
-
-Album.associate = function(Artist) {
-  Album.belongsTo(Artist, { foreignKey: 'artist_id' })
-}
-*/
-
 
 Artist.hasMany(Album, {
   onDelete: "CASCADE",
   onUpdate: "CASCADE",
   foreignKey: "artist_id"
 })
+
 Album.belongsTo(Artist, {
   foreignKey: {
     name: "artist_id"
   }
 })
 
-const db = {
-  "artists": Artist,
-  "albums": Album
-}
-
 const typeDefs = gql`
     type Query {
         albums: [Album]
-        album(id: ID!): Album
-        artists: [Artist]
-        artist(id: ID!): Artist
+        #        album(id: ID!): Album
+        #        artists: [Artist]
+        #        artist(id: ID!): Artist
     }
 
     type Mutation {
-        createAlbum(name: String!, year: String, artist_id: ID): Album
-        updateAlbum(id: ID!, name: String!, year: String, artist_id: ID): [Int!]!
+        createAlbum(name: String!, year: String, artist_id: ID): Album,
         deleteAlbum(id: ID!): Int
     }
 
@@ -115,31 +95,35 @@ const typeDefs = gql`
 `
 
 const resolvers = {
-  Artist: {
-    albums: (parent, args, context, info) => parent.getAlbums()
+  Query: {
+    albums: async (_parent, args, _context) => {
+      return Album.findAll()
+        .then(a => a)
+    }
+    // albums: (parent, args, { db }, info) => db.album.findAll()
   },
+
+  // Album: {
+  //   id: (album, _args, _context) => album.id,
+  //   artist: async (album, _args, { loader }) => {
+  //     return await Artist.findOne({ where: { id: album.artist_id } })
+  //   }
+  // },
 
   Album: {
     artist: (parent, _args, _context) => parent.getArtist()
   },
-  Query: {
-    albums: (parent, args, { db }) => db.albums.findAll(),
-    artists: (parent, args, { db }) => db.artists.findAll(),
-    album: (parent, { id }, { db }) => db.albums.findByPk(id),
-    artist: (parent, { id }, { db }) => db.artists.findByPk(id)
-  },
-  Mutation: {
-    createAlbum: (parent, { name, year, artist_id }, { db }) =>
-      db.albums.create({ name, year, artist_id }),
-    updateAlbum: (parent, { id, name, year, artist_id }, { db }) =>
-      db.albums.update(
-        { name, year },
-        {
-          where: { id }
-        }
-      ),
-    deleteAlbum: (parent, { id }, { db }) =>
-      db.albums.destroy({ where: { id } })
+
+  // Artist: {
+  //   id: (artist, _args, _context) => artist.id,
+  //   albums: async (artist, args, _context) => {
+  //
+  //     return Artist.findAll({ where: { artist_id: artist.id } })
+  //   }
+  // },
+
+  Artist: {
+    albums: (parent, _args, _context) => parent.getAlbums()
   }
 }
 
@@ -157,8 +141,7 @@ const cors = Cors({
 
 const apolloServer = new ApolloServer({
   typeDefs,
-  resolvers,
-  context: { db }
+  resolvers
   // context: () => {
   //   return { loader }
   // }

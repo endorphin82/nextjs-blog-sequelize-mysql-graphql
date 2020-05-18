@@ -2,24 +2,30 @@
 
 schema {
     query: Query
+    mutation: Mutation
 }
 
 type Album {
-    artist: Artist!
+    artist: Artist
     id: ID!
     name: String!
-    year: String!
+    year: String
 }
 
 type Artist {
-    albums(first: Int = 25, skip: Int = 0): [Album]
+    albums: [Album]
     id: ID!
     name: String!
     url: String
 }
 
+type Mutation {
+    createAlbum(artist_id: ID, name: String!, year: String): Album
+    deleteAlbum(id: ID!): Int
+}
+
 type Query {
-    albums(first: Int = 25, skip: Int = 0): [Album]
+    albums: [Album]
 }
 
 enum CacheControlScope {
