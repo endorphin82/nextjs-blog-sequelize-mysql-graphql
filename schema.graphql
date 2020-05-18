@@ -21,11 +21,18 @@ type Artist {
 
 type Mutation {
     createAlbum(artist_id: ID, name: String!, year: String): Album
+    createArtist(name: String!, yrl: String): Artist
     deleteAlbum(id: ID!): Int
+    deleteArtist(id: ID!): Int
+    updateAlbum(artist_id: ID, id: ID!, name: String!, year: String): [Int!]!
+    updateArtist(id: ID!, name: String!, url: String): [Int!]!
 }
 
 type Query {
+    album(id: ID!): Album
     albums: [Album]
+    artist(id: ID!): Artist
+    artists: [Artist]
 }
 
 enum CacheControlScope {

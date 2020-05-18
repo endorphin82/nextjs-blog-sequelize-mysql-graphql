@@ -10,8 +10,11 @@ export const typeDefs = gql`
 
     type Mutation {
         createAlbum(name: String!, year: String, artist_id: ID): Album
+        createArtist(name: String!, url: String): Artist
         updateAlbum(id: ID!, name: String!, year: String, artist_id: ID): [Int!]!
-        deleteAlbum(id: ID!): Int
+        updateArtist(id: ID!, name: String!, url: String): [Int!]!
+        deleteAlbum(id: ID!): Int,
+        deleteArtist(id: ID!): Int
     }
 
     type Artist {

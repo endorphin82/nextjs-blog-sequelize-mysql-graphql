@@ -15,7 +15,6 @@ export const resolvers = {
   },
   Mutation: {
     createAlbum: async (parent, { name, year, artist_id }, { db }) => {
-      console.log("++++++++++++", db)
       return await db.albums.create({ name, year, artist_id })
     },
     updateAlbum: async (parent, { id, name, year, artist_id }, { db }) =>
@@ -26,6 +25,18 @@ export const resolvers = {
         }
       ),
     deleteAlbum: async (parent, { id }, { db }) =>
-      await db.albums.destroy({ where: { id } })
+      await db.albums.destroy({ where: { id } }),
+    createArtist: async (parent, { name, url }, { db }) => {
+      return await db.artists.create({ name, url })
+    },
+    updateArtist: async (parent, { id, name, url }, { db }) =>
+      await db.artists.update(
+        { name, url },
+        {
+          where: { id }
+        }
+      ),
+    deleteArtist: async (parent, { id }, { db }) =>
+      await db.artists.destroy({ where: { id } })
   }
 }
