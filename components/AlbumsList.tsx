@@ -14,14 +14,6 @@ export const ALL_ALBUMS_QUERY = gql`
     }
 `
 
-// export const ALL_ALBUMS_QUERY = gql`
-//     query allAlbums {
-//         albums {
-//             id
-//             name
-//         }
-//     }
-// `
 export default function AlbumsList() {
   const { loading, error, data } = useQuery(ALL_ALBUMS_QUERY)
   if (loading || !data) return <div>Loading</div>
@@ -29,15 +21,15 @@ export default function AlbumsList() {
   console.log("allAlbums", albums)
   return (
     <section>
-       <h3>Sequelize</h3>
+      <h3>Sequelize</h3>
       <ul>
         {albums.map((album, index) => (
           <li key={album.id}>
             <div>
               <span>{index + 1}. </span>
               <a href={album.url}>{album.name}</a>
+              <span> artist: {album.artist.name}</span>
             </div>
-            <div>artist: {album.artist.name}</div>
           </li>
         ))}
       </ul>
