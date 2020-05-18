@@ -1,6 +1,7 @@
 import { Artist } from "./artists"
 import { Album } from "./albums"
 
+
 Artist.hasMany(Album, {
   onDelete: "CASCADE",
   onUpdate: "CASCADE",
@@ -17,3 +18,4 @@ export const db = {
   "artists": Artist,
   "albums": Album
 }
+

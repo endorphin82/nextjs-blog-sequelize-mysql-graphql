@@ -14,16 +14,18 @@ export const resolvers = {
     artist: (parent, { id }, { db }) => db.artists.findByPk(id)
   },
   Mutation: {
-    createAlbum: (parent, { name, year, artist_id }, { db }) =>
-      db.albums.create({ name, year, artist_id }),
-    updateAlbum: (parent, { id, name, year, artist_id }, { db }) =>
-      db.albums.update(
-        { name, year },
+    createAlbum: async (parent, { name, year, artist_id }, { db }) => {
+      console.log("++++++++++++", db)
+      return await db.albums.create({ name, year, artist_id })
+    },
+    updateAlbum: async (parent, { id, name, year, artist_id }, { db }) =>
+      await db.albums.update(
+        { name, year, artist_id },
         {
           where: { id }
         }
       ),
-    deleteAlbum: (parent, { id }, { db }) =>
-      db.albums.destroy({ where: { id } })
+    deleteAlbum: async (parent, { id }, { db }) =>
+      await db.albums.destroy({ where: { id } })
   }
 }
