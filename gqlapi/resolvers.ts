@@ -1,11 +1,12 @@
 export const resolvers = {
   Artist: {
-    albums: (parent, args, context, info) => parent.getAlbums()
+    albums: (parent, args, context) => parent.getAlbums()
   },
 
   Album: {
-    artist: (parent, _args, _context) => parent.getArtist()
+    artist: (parent, args, context) => parent.getArtist()
   },
+
   Query: {
     albums: (parent, args, { db }) => db.albums.findAll(),
     artists: (parent, args, { db }) => db.artists.findAll(),
