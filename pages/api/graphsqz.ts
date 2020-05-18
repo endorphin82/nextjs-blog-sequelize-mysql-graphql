@@ -54,20 +54,6 @@ const Album = sequelize.define("albums", {
   timestamps: false
 })
 
-/*
-Artist.associate = function(Album) {
-  Artist.hasMany(Album, {
-    onDelete: "CASCADE",
-    onUpdate: "CASCADE",
-    foreignKey: 'artist_id'
-  })
-}
-
-Album.associate = function(Artist) {
-  Album.belongsTo(Artist, { foreignKey: 'artist_id' })
-}
-*/
-
 
 Artist.hasMany(Album, {
   onDelete: "CASCADE",
@@ -116,12 +102,13 @@ const typeDefs = gql`
 
 const resolvers = {
   Artist: {
-    albums: (parent, args, context, info) => parent.getAlbums()
+    albums: (parent, args, context) => parent.getAlbums()
   },
 
   Album: {
-    artist: (parent, _args, _context) => parent.getArtist()
+    artist: (parent, args, context) => parent.getArtist()
   },
+
   Query: {
     albums: (parent, args, { db }) => db.albums.findAll(),
     artists: (parent, args, { db }) => db.artists.findAll(),
@@ -159,9 +146,6 @@ const apolloServer = new ApolloServer({
   typeDefs,
   resolvers,
   context: { db }
-  // context: () => {
-  //   return { loader }
-  // }
 })
 
 const handler = apolloServer.createHandler({ path: "/api/graphsqz" })
