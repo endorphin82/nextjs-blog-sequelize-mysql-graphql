@@ -1,10 +1,7 @@
 import { ApolloServer, gql } from "apollo-server-micro"
 import Cors from "micro-cors"
-import { resolvers } from "../../gqlapi/resolvers"
 import { sequelize } from "../../gqlapi/models/base"
-import { db } from "../../gqlapi/models"
-import { typeDefs } from "../../gqlapi/schema"
-// import DataLoader from "dataloader"
+import { schema } from "../../gqlapi/schema"
 
 sequelize
   .authenticate()
@@ -20,11 +17,15 @@ const cors = Cors({
 })
 
 const apolloServer = new ApolloServer({
+  schema
+})
+/*
+const apolloServer = new ApolloServer({
   typeDefs,
   resolvers,
   context: { db }
 })
-
+*/
 const handler = apolloServer.createHandler({ path: "/api/graphsqz" })
 
 export const config = {

@@ -1,6 +1,15 @@
 // import { gql } from "apollo-server-micro"
-import { GraphQLObjectType, GraphQLList, GraphQLNonNull, GraphQLInt, GraphQLString } from "graphql"
-import { Album } from "./models/albums"
+import {
+  GraphQLObjectType,
+  GraphQLList,
+  GraphQLNonNull,
+  GraphQLInt,
+  GraphQLString,
+  GraphQLSchema,
+  GraphQLID
+} from "graphql"
+import { Album, Artist } from "./models"
+
 
 const AlbumType = new GraphQLObjectType({
   name: "Album",
@@ -21,6 +30,14 @@ const AlbumType = new GraphQLObjectType({
       type: GraphQLInt,
       description: "The artist_id of the Album."
     }
+    /*
+    TODO: add after ArtistType
+     artist: {
+       type: ArtistType,
+       resolve: ({ artist }) => Artist.findAll({ where: { artist_id: artist } })
+       // resolve: (parent) => parent.getArtist()
+     }
+     */
   }
 })
 
@@ -41,53 +58,97 @@ const ArtistType = new GraphQLObjectType({
     },
     albums: {
       type: new GraphQLList(AlbumType),
-      resolve: async ({ albums }, args) => {
-        return await Album.findAll({ whereIn: { artist_id: albums } })
-      }
+      // resolve: ({ albums }) => Artist.findAll({ whereIn: { id: albums } })
+      resolve: (parent, args, context) => parent.getAlbums()
     }
   }
 })
 
-
-// categories: {
-//   type: new GraphQLList(CategoryType),
-//   resolve({ categories }, args) {
-//     return Categories.find({ _id: { $in: categories } }, (err, docs) => {
-//       console.log(docs)
-//     })
-//   },
-// },
-
-/*
-export const typeDefs = gql`
-    type Query {
-        albums: [Album]
-        album(id: ID!): Album
-        artists: [Artist]
-        artist(id: ID!): Artist
+const Query = new GraphQLObjectType({
+  name: "Query",
+  fields: {
+    albums: {
+      type: new GraphQLList(AlbumType),
+      resolve: async (parent) => await Album.findAll()
+    },
+    albumById: {
+      type: AlbumType,
+      args: { id: { type: new GraphQLNonNull(GraphQLID) } },
+      resolve: (parent, { id }) => Album.findByPk(id)
+    },
+    artists: {
+      type: new GraphQLList(ArtistType),
+      resolve: async (parent) => await Artist.findAll()
+    },
+    artistById: {
+      type: ArtistType,
+      args: { id: { type: new GraphQLNonNull(GraphQLID) } },
+      resolve: (parent, { id }) => Artist.findByPk(id)
+    }
+  }
+})
+const Mutation = new GraphQLObjectType({
+  name: "Mutation",
+  fields: {
+    createAlbum: {
+      type: AlbumType,
+      args: {
+        name: { type: new GraphQLNonNull(GraphQLString) },
+        year: { type: GraphQLString },
+        artist_id: { type: GraphQLID }
+      },
+      resolve: (parent, { name, year, artist_id }) =>
+        Album.create({ name, year, artist_id })
+    },
+    createArtist: {
+      type: ArtistType,
+      args: {
+        name: { type: new GraphQLNonNull(GraphQLString) },
+        url: { type: GraphQLString }
+      },
+      resolve: (parent, { name, url }) =>
+        Artist.create({ name, url })
+    },
+    updateAlbum: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLInt))),
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLID) },
+        name: { type: new GraphQLNonNull(GraphQLString) },
+        year: { type: GraphQLString },
+        artist_id: { type: GraphQLID }
+      },
+      resolve: (parent, { id, name, year, artist_id }) =>
+        Album.update({ name, year, artist_id }, {
+          where: { id }
+        })
+    },
+    updateArtist: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLInt))),
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLID) },
+        name: { type: new GraphQLNonNull(GraphQLString) },
+        url: { type: GraphQLString }
+      },
+      resolve: (parent, { id, name, url }) =>
+        Artist.update({ name, url }, {
+          where: { id }
+        })
+    },
+    deleteAlbum: {
+      type: GraphQLInt,
+      args: { id: { type: new GraphQLNonNull(GraphQLID) } },
+      resolve: (parent, { id }) => Album.destroy({ where: { id } })
+    },
+    deleteArtist: {
+      type: GraphQLInt,
+      args: { id: { type: new GraphQLNonNull(GraphQLID) } },
+      resolve: (parent, { id }) => Artist.destroy({ where: { id } })
     }
 
-    type Mutation {
-        createAlbum(name: String!, year: String, artist_id: ID): Album
-        createArtist(name: String!, url: String): Artist
-        updateAlbum(id: ID!, name: String!, year: String, artist_id: ID): [Int!]!
-        updateArtist(id: ID!, name: String!, url: String): [Int!]!
-        deleteAlbum(id: ID!): Int,
-        deleteArtist(id: ID!): Int
-    }
+  }
+})
 
-    type Artist {
-        id: ID!
-        name: String!
-        url: String
-        albums: [Album]
-    }
-
-    type Album {
-        id: ID!
-        name: String!
-        year: String
-        artist: Artist
-    }
-`
-*/
+export const schema = new GraphQLSchema({
+  query: Query,
+  mutation: Mutation
+})
