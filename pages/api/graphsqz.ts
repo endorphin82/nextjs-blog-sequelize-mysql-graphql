@@ -15,11 +15,13 @@ sequelize
   })
 */
 
- mongoose.connect('mongodb://localhost:27017/media', {
+mongoose.connect("mongodb://localhost:27017/media", {
   useUnifiedTopology: true,
-  useNewUrlParser: true,
+  useNewUrlParser: true
 })
+
 const dbConnection = mongoose.connection
+
 dbConnection.on("error", (err) => {
   console.log(`Connection error: ${err}`)
 })

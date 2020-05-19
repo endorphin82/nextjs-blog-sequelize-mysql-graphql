@@ -8,7 +8,7 @@ import {
   GraphQLSchema,
   GraphQLID
 } from "graphql"
-import { Album, Artist } from "./models_mon"
+import { Album, Artist } from "./models_seq"
 
 const AlbumType = new GraphQLObjectType({
   name: "Album",
@@ -23,9 +23,9 @@ const AlbumType = new GraphQLObjectType({
       type: GraphQLString
     },
     artist_id: {
-      type: GraphQLID
+      type: GraphQLID,
     }
-
+    
     /*
       // @ts-ignore
         // TODO: add after ArtistType
@@ -52,9 +52,8 @@ const ArtistType = new GraphQLObjectType({
     },
     albums: {
       type: new GraphQLList(AlbumType),
-      resolve: ({ id }) => Album.find({ artist_id:  id  }, (err, docs) => {
-        console.log(docs)
-      })
+      // resolve: ({ albums }) => Artist.findAll({ whereIn: { id: albums } })
+      resolve: (parent, args, context) => parent.getAlbums()
     }
   }
 })
@@ -64,21 +63,21 @@ const Query = new GraphQLObjectType({
   fields: {
     albums: {
       type: new GraphQLList(AlbumType),
-      resolve: async () => await Album.find({})
+      resolve: async (parent) => await Album.findAll()
     },
     albumById: {
       type: AlbumType,
       args: { id: { type: new GraphQLNonNull(GraphQLID) } },
-      resolve: (parent, { id }) => Album.findById(id)
+      resolve: (parent, { id }) => Album.findByPk(id)
     },
     artists: {
       type: new GraphQLList(ArtistType),
-      resolve: async (parent) => await Artist.find({})
+      resolve: async (parent) => await Artist.findAll()
     },
     artistById: {
       type: ArtistType,
       args: { id: { type: new GraphQLNonNull(GraphQLID) } },
-      resolve: (parent, { id }) => Artist.findById(id)
+      resolve: (parent, { id }) => Artist.findByPk(id)
     }
   }
 })
@@ -92,10 +91,8 @@ const Mutation = new GraphQLObjectType({
         year: { type: GraphQLString },
         artist_id: { type: GraphQLID }
       },
-      resolve: (parent, { name, year, artist_id }) => {
-        const album = new Album({ name, year, artist_id })
-        return album.save()
-      }
+      resolve: (parent, { name, year, artist_id }) =>
+        Album.create({ name, year, artist_id })
     },
     createArtist: {
       type: ArtistType,
@@ -103,11 +100,8 @@ const Mutation = new GraphQLObjectType({
         name: { type: new GraphQLNonNull(GraphQLString) },
         url: { type: GraphQLString }
       },
-      resolve: (parent, { name, url }) => {
-        const artist = new Artist({ name, url })
-        return artist.save()
-      }
-
+      resolve: (parent, { name, url }) =>
+        Artist.create({ name, url })
     },
     updateAlbum: {
       type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLInt))),
@@ -118,11 +112,9 @@ const Mutation = new GraphQLObjectType({
         artist_id: { type: GraphQLID }
       },
       resolve: (parent, { id, name, year, artist_id }) =>
-        Album.findByIdAndUpdate(
-          id,
-          { $set: { name, year, artist_id } },
-          { new: true }
-        )
+        Album.update({ name, year, artist_id }, {
+          where: { id }
+        })
     },
     updateArtist: {
       type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLInt))),
@@ -132,21 +124,19 @@ const Mutation = new GraphQLObjectType({
         url: { type: GraphQLString }
       },
       resolve: (parent, { id, name, url }) =>
-        Artist.findByIdAndUpdate(
-          id,
-          { $set: { name, url } },
-          { new: true }
-        )
+        Artist.update({ name, url }, {
+          where: { id }
+        })
     },
     deleteAlbum: {
       type: GraphQLInt,
       args: { id: { type: new GraphQLNonNull(GraphQLID) } },
-      resolve: (parent, { id }) => Album.findByIdAndRemove(id)
+      resolve: (parent, { id }) => Album.destroy({ where: { id } })
     },
     deleteArtist: {
       type: GraphQLInt,
       args: { id: { type: new GraphQLNonNull(GraphQLID) } },
-      resolve: (parent, { id }) => Artist.findByIdAndRemove(id)
+      resolve: (parent, { id }) => Artist.destroy({ where: { id } })
     }
   }
 })
