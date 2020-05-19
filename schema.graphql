@@ -6,7 +6,7 @@ schema {
 }
 
 type Album {
-    artist: Artist
+    artist_id: ID
     id: ID!
     name: String!
     year: String
@@ -21,7 +21,7 @@ type Artist {
 
 type Mutation {
     createAlbum(artist_id: ID, name: String!, year: String): Album
-    createArtist(name: String!, yrl: String): Artist
+    createArtist(name: String!, url: String): Artist
     deleteAlbum(id: ID!): Int
     deleteArtist(id: ID!): Int
     updateAlbum(artist_id: ID, id: ID!, name: String!, year: String): [Int!]!
@@ -29,17 +29,8 @@ type Mutation {
 }
 
 type Query {
-    album(id: ID!): Album
+    albumById(id: ID!): Album
     albums: [Album]
-    artist(id: ID!): Artist
+    artistById(id: ID!): Artist
     artists: [Artist]
 }
-
-enum CacheControlScope {
-    PRIVATE
-    PUBLIC
-}
-
-
-"The `Upload` scalar type represents a file upload."
-scalar Upload

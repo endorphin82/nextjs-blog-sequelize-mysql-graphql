@@ -1,8 +1,10 @@
 import { ApolloServer, gql } from "apollo-server-micro"
 import Cors from "micro-cors"
-import { sequelize } from "../../gqlapi/models/base"
+import { sequelize } from "../../gqlapi/models_seq/base"
+import mongoose from "mongoose"
 import { schema } from "../../gqlapi/schema"
 
+/*
 sequelize
   .authenticate()
   .then(() => {
@@ -11,6 +13,20 @@ sequelize
   .catch(err => {
     console.error("Unable to connect to the database:", err)
   })
+*/
+
+ mongoose.connect('mongodb://localhost:27017/media', {
+  useUnifiedTopology: true,
+  useNewUrlParser: true,
+})
+const dbConnection = mongoose.connection
+dbConnection.on("error", (err) => {
+  console.log(`Connection error: ${err}`)
+})
+
+dbConnection.once("open", () => {
+  console.log("Connected to mongo DB")
+})
 
 const cors = Cors({
   allowMethods: ["GET", "POST", "OPTIONS"]
@@ -19,13 +35,7 @@ const cors = Cors({
 const apolloServer = new ApolloServer({
   schema
 })
-/*
-const apolloServer = new ApolloServer({
-  typeDefs,
-  resolvers,
-  context: { db }
-})
-*/
+
 const handler = apolloServer.createHandler({ path: "/api/graphsqz" })
 
 export const config = {

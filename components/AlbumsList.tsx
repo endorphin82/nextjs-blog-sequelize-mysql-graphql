@@ -1,35 +1,37 @@
 import { useQuery } from "@apollo/react-hooks"
 import gql from "graphql-tag"
 
-export const ALL_ALBUMS_QUERY = gql`
-    query allAlbums {
-        albums {
+export const ALL_ARTISTS_QUERY = gql`
+    query allArtists {
+        artists {
             id
             name
-            artist {
+            albums{
                 id
                 name
+                year
             }
         }
     }
 `
 
 export default function AlbumsList() {
-  const { loading, error, data } = useQuery(ALL_ALBUMS_QUERY)
+  const { loading, error, data } = useQuery(ALL_ARTISTS_QUERY)
   if (loading || !data) return <div>Loading</div>
-  const { albums } = data
-  console.log("allAlbums", albums)
+  const { artists } = data
+
   return (
     <section>
       <h3>Sequelize</h3>
       <ul>
-        {albums.map((album, index) => (
-          <li key={album.id}>
-            <div>
-              <span>{index + 1}. </span>
-              <a href={album.url}>{album.name}</a>
-              <span> artist: {album.artist.name}</span>
-            </div>
+        {artists.map((artist, index) => (
+          <li key={artist.id}>
+              <h4>{artist.id }. {artist.name}</h4>
+              <ul>
+                {artist.albums.map((album, index) =>
+                 <li key={artist.id+index}>{album.name }{' '}{album.year } </li>
+               )}
+              </ul>
           </li>
         ))}
       </ul>

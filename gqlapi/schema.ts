@@ -8,36 +8,33 @@ import {
   GraphQLSchema,
   GraphQLID
 } from "graphql"
-import { Album, Artist } from "./models"
-
+import { Album, Artist } from "./models_seq"
 
 const AlbumType = new GraphQLObjectType({
   name: "Album",
   fields: {
     id: {
-      type: new GraphQLNonNull(GraphQLInt),
-      description: "The id of the Album."
+      type: new GraphQLNonNull(GraphQLID)
     },
     name: {
-      type: new GraphQLNonNull(GraphQLString),
-      description: "The name of the Album."
+      type: new GraphQLNonNull(GraphQLString)
     },
     year: {
-      type: GraphQLString,
-      description: "The year of the Album."
+      type: GraphQLString
     },
     artist_id: {
-      type: GraphQLInt,
-      description: "The artist_id of the Album."
+      type: GraphQLID,
     }
+    
     /*
-    TODO: add after ArtistType
-     artist: {
-       type: ArtistType,
-       resolve: ({ artist }) => Artist.findAll({ where: { artist_id: artist } })
-       // resolve: (parent) => parent.getArtist()
-     }
-     */
+      // @ts-ignore
+        // TODO: add after ArtistType
+        artist: {
+          type: ArtistType,
+          // resolve: ({ artist }) => Artist.findAll({ where: { artist_id: artist } })
+          resolve: (parent) => parent.getArtist()
+        }
+    */
   }
 })
 
@@ -45,16 +42,13 @@ const ArtistType = new GraphQLObjectType({
   name: "Artist",
   fields: {
     id: {
-      type: new GraphQLNonNull(GraphQLInt),
-      description: "The id of the Artist."
+      type: new GraphQLNonNull(GraphQLID)
     },
     name: {
-      type: new GraphQLNonNull(GraphQLString),
-      description: "The name of the Artist."
+      type: new GraphQLNonNull(GraphQLString)
     },
     url: {
-      type: GraphQLString,
-      description: "The url of the Artist."
+      type: GraphQLString
     },
     albums: {
       type: new GraphQLList(AlbumType),
@@ -144,7 +138,6 @@ const Mutation = new GraphQLObjectType({
       args: { id: { type: new GraphQLNonNull(GraphQLID) } },
       resolve: (parent, { id }) => Artist.destroy({ where: { id } })
     }
-
   }
 })
 
