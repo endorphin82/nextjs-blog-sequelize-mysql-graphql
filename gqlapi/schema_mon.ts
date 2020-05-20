@@ -26,7 +26,7 @@ const Query = new GraphQLObjectType({
     },
     artists: {
       type: new GraphQLList(ArtistType),
-      resolve: async (parent) => await Artist.find({})
+      resolve: async () => await Artist.find({})
     },
     artistById: {
       type: ArtistType,

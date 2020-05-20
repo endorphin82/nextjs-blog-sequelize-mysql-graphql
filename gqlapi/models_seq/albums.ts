@@ -13,9 +13,6 @@ export const Album = sequelize.define("albums", {
   },
   year: {
     type: STRING({ length: 45 })
-  },
-  artist_id: {
-    type: INTEGER
   }
 }, {
   timestamps: false

@@ -22,18 +22,12 @@ const AlbumType = new GraphQLObjectType({
     year: {
       type: GraphQLString
     },
-    artist_id: {
-      type: GraphQLID,
-    },
-
-
-      // @ts-ignore
-        // TODO: add after ArtistType
-        artist: {
-          type: ArtistType,
-          resolve: async ({ artist_id }) => await Artist.findOne({ where: { id: artist_id } })
-          // resolve: (parent) => parent.getArtist()
-        }
+    artists: {
+      type: new GraphQLList(ArtistType),
+      // resolve: ({ artists }) => Album.findAll({ whereIn: { id: artists } })
+      // resolve: async ({ artist_id }) => await Artist.findOne({ where: { id: artist_id } })
+      resolve: (parent) => parent.getArtists()
+    }
 
   })
 })
@@ -52,8 +46,8 @@ const ArtistType = new GraphQLObjectType({
     },
     albums: {
       type: new GraphQLList(AlbumType),
-      resolve: ({ albums }) => Artist.findAll({ whereIn: { id: albums } })
-      // resolve: (parent, args, context) => parent.getAlbums()
+      // resolve: ({ albums }) => Artist.findAll({ whereIn: { id: albums } })
+      resolve: (parent, args, context) => parent.getAlbums()
     }
   })
 })

@@ -1,16 +1,25 @@
 import { Artist } from "./artists"
 import { Album } from "./albums"
+import { sequelize } from "./base"
 
-Artist.hasMany(Album, {
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
-  foreignKey: "artist_id"
+const Artists_Albums = sequelize.define("artists_albums", {
+  createdAt: { type: Date, default: Date.now },
+},{
+  timestamps: false
 })
 
-Album.belongsTo(Artist, {
-  foreignKey: {
-    name: "artist_id"
-  }
+Artist.belongsToMany(Album, {
+  // onDelete: "CASCADE",
+  // onUpdate: "CASCADE",
+  foreignKey: "artist_id",
+  through: Artists_Albums
+})
+
+Album.belongsToMany(Artist, {
+  // onDelete: "CASCADE",
+  // onUpdate: "CASCADE",
+  foreignKey: "album_id",
+  through: Artists_Albums
 })
 
 export {

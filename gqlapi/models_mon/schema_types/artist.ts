@@ -1,6 +1,7 @@
 import { GraphQLID, GraphQLList, GraphQLNonNull, GraphQLObjectType, GraphQLString } from "graphql"
 import { Album } from "../albums"
 import { AlbumType } from "./album"
+import { Artist } from "../artists"
 
 export const ArtistType = new GraphQLObjectType({
   name: "Artist",
@@ -16,9 +17,10 @@ export const ArtistType = new GraphQLObjectType({
     },
     albums: {
       type: new GraphQLList(AlbumType),
-      resolve: ({ id }) => Album.find({ artist_id:  id  }, (err, docs) => {
-        console.log(docs)
-      })
+      resolve: (parent, args ) => {
+        console.log("---parent---args", parent,"---+---", args)
+        return Album.find({ artists_ids: parent._id })
+      }
     }
   })
 })
