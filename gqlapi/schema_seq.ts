@@ -12,7 +12,7 @@ import { Album, Artist } from "./models_seq"
 
 const AlbumType = new GraphQLObjectType({
   name: "Album",
-  fields: {
+  fields: () => ({
     id: {
       type: new GraphQLNonNull(GraphQLID)
     },
@@ -24,23 +24,23 @@ const AlbumType = new GraphQLObjectType({
     },
     artist_id: {
       type: GraphQLID,
-    }
-    
-    /*
+    },
+
+
       // @ts-ignore
         // TODO: add after ArtistType
         artist: {
           type: ArtistType,
-          // resolve: ({ artist }) => Artist.findAll({ where: { artist_id: artist } })
-          resolve: (parent) => parent.getArtist()
+          resolve: async ({ artist_id }) => await Artist.findOne({ where: { id: artist_id } })
+          // resolve: (parent) => parent.getArtist()
         }
-    */
-  }
+
+  })
 })
 
 const ArtistType = new GraphQLObjectType({
   name: "Artist",
-  fields: {
+  fields: () => ({
     id: {
       type: new GraphQLNonNull(GraphQLID)
     },
@@ -52,10 +52,10 @@ const ArtistType = new GraphQLObjectType({
     },
     albums: {
       type: new GraphQLList(AlbumType),
-      // resolve: ({ albums }) => Artist.findAll({ whereIn: { id: albums } })
-      resolve: (parent, args, context) => parent.getAlbums()
+      resolve: ({ albums }) => Artist.findAll({ whereIn: { id: albums } })
+      // resolve: (parent, args, context) => parent.getAlbums()
     }
-  }
+  })
 })
 
 const Query = new GraphQLObjectType({
@@ -141,7 +141,7 @@ const Mutation = new GraphQLObjectType({
   }
 })
 
-export const schema = new GraphQLSchema({
+export const schema_seq = new GraphQLSchema({
   query: Query,
   mutation: Mutation
 })
