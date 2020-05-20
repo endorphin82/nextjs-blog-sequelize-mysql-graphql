@@ -11,11 +11,6 @@ import {
 import { Album, Artist } from "./models_mon"
 import { AlbumType } from "./models_mon/schema_types/album"
 import { ArtistType } from "./models_mon/schema_types/artist"
-import { dbConnection } from "../pages/api/graphsqz"
-
-
-
-
 
 const Query = new GraphQLObjectType({
   name: "Query",
@@ -36,9 +31,7 @@ const Query = new GraphQLObjectType({
     artistById: {
       type: ArtistType,
       args: { id: { type: new GraphQLNonNull(GraphQLID) } },
-      resolve: (parent, { id }) => Artist.findById(id, () => {
-        dbConnection.close();
-      })
+      resolve: (parent, { id }) => Artist.findById(id)
     }
   }
 })
@@ -111,7 +104,7 @@ const Mutation = new GraphQLObjectType({
   }
 })
 
-export const schema = new GraphQLSchema({
+export const schema_mon = new GraphQLSchema({
   query: Query,
   mutation: Mutation
 })
