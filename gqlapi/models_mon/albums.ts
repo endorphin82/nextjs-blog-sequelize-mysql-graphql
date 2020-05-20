@@ -2,6 +2,7 @@ import mongoose from "mongoose"
 
 const Schema = mongoose.Schema
 
+// fix OverwriteModelError
 delete mongoose.connection.models["albums"]
 
 const AlbumSchema = new Schema({
