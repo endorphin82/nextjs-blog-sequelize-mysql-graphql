@@ -2,6 +2,8 @@ import mongoose from "mongoose"
 
 const Schema = mongoose.Schema
 
+delete mongoose.connection.models["albums"]
+
 const AlbumSchema = new Schema({
   name: String,
   year: String,

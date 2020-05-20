@@ -20,7 +20,7 @@ mongoose.connect("mongodb://localhost:27017/media", {
   useNewUrlParser: true
 })
 
-const dbConnection = mongoose.connection
+export const dbConnection = mongoose.connection
 
 dbConnection.on("error", (err) => {
   console.log(`Connection error: ${err}`)

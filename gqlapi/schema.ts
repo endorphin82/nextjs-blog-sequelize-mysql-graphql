@@ -9,55 +9,13 @@ import {
   GraphQLID
 } from "graphql"
 import { Album, Artist } from "./models_mon"
+import { AlbumType } from "./models_mon/schema_types/album"
+import { ArtistType } from "./models_mon/schema_types/artist"
+import { dbConnection } from "../pages/api/graphsqz"
 
-const AlbumType = new GraphQLObjectType({
-  name: "Album",
-  fields: {
-    id: {
-      type: new GraphQLNonNull(GraphQLID)
-    },
-    name: {
-      type: new GraphQLNonNull(GraphQLString)
-    },
-    year: {
-      type: GraphQLString
-    },
-    artist_id: {
-      type: GraphQLID
-    }
 
-    /*
-      // @ts-ignore
-        // TODO: add after ArtistType
-        artist: {
-          type: ArtistType,
-          // resolve: ({ artist }) => Artist.findAll({ where: { artist_id: artist } })
-          resolve: (parent) => parent.getArtist()
-        }
-    */
-  }
-})
 
-const ArtistType = new GraphQLObjectType({
-  name: "Artist",
-  fields: {
-    id: {
-      type: new GraphQLNonNull(GraphQLID)
-    },
-    name: {
-      type: new GraphQLNonNull(GraphQLString)
-    },
-    url: {
-      type: GraphQLString
-    },
-    albums: {
-      type: new GraphQLList(AlbumType),
-      resolve: ({ id }) => Album.find({ artist_id:  id  }, (err, docs) => {
-        console.log(docs)
-      })
-    }
-  }
-})
+
 
 const Query = new GraphQLObjectType({
   name: "Query",
@@ -78,7 +36,9 @@ const Query = new GraphQLObjectType({
     artistById: {
       type: ArtistType,
       args: { id: { type: new GraphQLNonNull(GraphQLID) } },
-      resolve: (parent, { id }) => Artist.findById(id)
+      resolve: (parent, { id }) => Artist.findById(id, () => {
+        dbConnection.close();
+      })
     }
   }
 })
