@@ -7,11 +7,7 @@ delete mongoose.connection.models["albums"]
 
 const AlbumSchema = new Schema({
   name: String,
-  year: String,
-  artist_id: {
-    type: Schema.Types.ObjectId,
-    ref: "artists"
-  }
+  year: String
 })
 
 export const Album = mongoose.model("albums", AlbumSchema)

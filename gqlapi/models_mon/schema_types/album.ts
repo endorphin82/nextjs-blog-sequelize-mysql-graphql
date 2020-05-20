@@ -1,4 +1,4 @@
-import { GraphQLID, GraphQLNonNull, GraphQLObjectType, GraphQLString } from "graphql"
+import { GraphQLID, GraphQLNonNull, GraphQLList, GraphQLObjectType, GraphQLString } from "graphql"
 import { ArtistType } from "./artist"
 import { Artist } from "../artists"
 
@@ -14,12 +14,17 @@ export const AlbumType = new GraphQLObjectType({
     year: {
       type: GraphQLString
     },
-    artist_id: {
-      type: GraphQLID
+    artists_ids: {
+      type: new GraphQLList(GraphQLID)
     },
-    artist: {
-      type: ArtistType,
-      resolve: async ({ artist_id }) => await Artist.findById(artist_id)
+    artists: {
+      type: new GraphQLList(ArtistType),
+      resolve: async (parent) => {
+        console.log("+++parent+++", parent)
+        return await Artist.find({ _id: { $in: parent.artists_ids } }, (err, docs) => {
+          console.log("asdasdada", docs, err, parent.artists_ids)
+        })
+      }
     }
   })
 })
