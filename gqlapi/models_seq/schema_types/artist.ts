@@ -1,5 +1,4 @@
 import { GraphQLID, GraphQLList, GraphQLNonNull, GraphQLObjectType, GraphQLString } from "graphql"
-import { Album } from "../albums"
 import { AlbumType } from "./album"
 
 export const ArtistType = new GraphQLObjectType({
@@ -16,10 +15,8 @@ export const ArtistType = new GraphQLObjectType({
     },
     albums: {
       type: new GraphQLList(AlbumType),
-      resolve: (parent, args ) => {
-        console.log("---parent---args", parent,"---+---", args)
-        return Album.find({ artists_ids: parent._id })
-      }
+      // resolve: ({ albums }) => Artist.findAll({ whereIn: { id: albums } })
+      resolve: (parent, args, context) => parent.getAlbums()
     }
   })
 })

@@ -42,11 +42,11 @@ const Mutation = new GraphQLObjectType({
       type: AlbumType,
       args: {
         name: { type: new GraphQLNonNull(GraphQLString) },
-        year: { type: GraphQLString },
-        artist_id: { type: GraphQLID }
+        year: { type: new GraphQLList(GraphQLString) },
+        artists_ids: { type: GraphQLID }
       },
-      resolve: (parent, { name, year, artist_id }) => {
-        const album = new Album({ name, year, artist_id })
+      resolve: (parent, { name, year, artists_ids }) => {
+        const album = new Album({ name, year, artists_ids })
         return album.save()
       }
     },
@@ -68,12 +68,12 @@ const Mutation = new GraphQLObjectType({
         id: { type: new GraphQLNonNull(GraphQLID) },
         name: { type: new GraphQLNonNull(GraphQLString) },
         year: { type: GraphQLString },
-        artist_id: { type: GraphQLID }
+        artists_ids: { type: new GraphQLList(GraphQLID) }
       },
-      resolve: (parent, { id, name, year, artist_id }) =>
+      resolve: (parent, { id, name, year, artists_ids }) =>
         Album.findByIdAndUpdate(
           id,
-          { $set: { name, year, artist_id } },
+          { $set: { name, year, artists_ids } },
           { new: true }
         )
     },
