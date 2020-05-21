@@ -6,15 +6,14 @@ schema {
 }
 
 type Album {
-    artist_id: ID
-    arts: Artist
+    artists: [Artist]
     id: ID!
     name: String!
     year: String
 }
 
 type Artist {
-    albs: [Album]
+    albums: [Album]
     id: ID!
     name: String!
     url: String

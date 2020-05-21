@@ -20,8 +20,9 @@ export const AlbumType = new GraphQLObjectType({
     artists: {
       type: new GraphQLList(ArtistType),
       resolve: async (parent) => {
-        console.log("+++parent+++", parent)
-        return await Artist.find({ _id: { $in: parent.artists_ids } }, (err, docs) => {
+// TODO: not work
+        console.log("+++parent+++", parent?.artists_ids)
+        return await Artist.find({ _id: { $in: parent } }, (err, docs) => {
           console.log("asdasdada", docs, err, parent.artists_ids)
         })
       }

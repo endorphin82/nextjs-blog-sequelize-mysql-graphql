@@ -1,4 +1,5 @@
-import { sequelize, INTEGER, STRING } from "./base"
+import { sequelize } from "./base"
+import { INTEGER, STRING } from "sequelize"
 
 export const Album = sequelize.define("albums", {
   id: {
