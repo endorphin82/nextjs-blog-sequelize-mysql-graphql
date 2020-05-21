@@ -2,7 +2,7 @@ import { Sequelize } from "sequelize"
 
 export const sequelize = new Sequelize(process.env.DATABASE_URL)
 
-export function connectSeq () {
+export function connectSeq (sequelize) {
 
   sequelize
     .authenticate()
