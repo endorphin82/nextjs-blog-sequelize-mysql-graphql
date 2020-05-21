@@ -5,17 +5,16 @@ import { schema_seq } from "../../gqlapi/schema_seq"
 import { schema_mon } from "../../gqlapi/schema_mon"
 import { connectMon } from "../../gqlapi/models_mon/base"
 
-connectSeq(sequelize)
-
-// connectMon()
+// connectSeq(sequelize)
+connectMon()
 
 const cors = Cors({
   allowMethods: ["GET", "POST", "OPTIONS"]
 })
 
 const apolloServer = new ApolloServer({
-  schema: schema_seq
-  // schema: schema_mon
+  // schema: schema_seq
+  schema: schema_mon
 })
 
 const handler = apolloServer.createHandler({ path: "/api/graphsqz" })
